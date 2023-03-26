@@ -1,8 +1,8 @@
-import sqlite3
+import sqlite3 as sql
 from table import Table
 class Deck(Table):
     
-    def __init__(self, init=False):
+    def __init__(self):
         #Constructor for Deck() class
         pass
 
@@ -13,7 +13,7 @@ class Deck(Table):
     def selectDeck(self):
         #Select deck from sql database
         pass
-
-    def addCard(self, front, back):
+    
+    def makeCard(self, front, back):
         #Add card to deck
-        pass
+        conn = sql.connect()
