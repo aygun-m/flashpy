@@ -1,7 +1,21 @@
 import sqlite3 as sql
 from os.path import exists
-from src.settings import DB_DIR, ABS_DIR
-from src.table import Table
+from src.settings import DB_DIR
+from os import remove, listdir
+
+class Table:
+
+    def __init__(self):
+        
+        #obtain list of all databases/decks
+
+        self.db_dir = DB_DIR
+
+        self.allDecks = listdir(self.db_dir)
+
+    def decks(self):
+
+        return self.allDecks
 
 class Deck(Table):
     
@@ -14,7 +28,7 @@ class Deck(Table):
                 conn = sql.connect(f'{DB_DIR}{self.db_name}')
                 curs = conn.cursor()
                 curs.execute(f"""
-                CREATE TABLE IF NOT EXISTS {self.name} 
+                    CREATE TABLE IF NOT EXISTS {self.name} 
                 (
                     id INTEGER PRIMARY KEY, 
                     front TEXT,
@@ -24,42 +38,56 @@ class Deck(Table):
                 conn.close()
             self.init = True
         else: raise TypeError("Inappropriate argument type for Deck() class")
-       
+        d = Table()
+        self.allDecks = d.decks()
+        self.__updateDeckStatus()
+        
     def __repr__(self):
         #Represent Deck() class as a str
         return self.name
     
-    def viewDeck(self):
+    def printDeck(self):
         #begin iterating cards in deck
         conn = sql.connect(f'{DB_DIR}{self.db_name}')
         curs = conn.cursor()
         cards = curs.execute(f"""
         SELECT * FROM {self.name}""").fetchall()
         conn.close()
-        return cards
+        print(cards)
 
-    def makeCard(self, front, back):
+    def addCard(self, front, back):
         #Add card to deck
         conn = sql.connect(f'{DB_DIR}{self.db_name}')
         curs = conn.cursor()
-        curs.execute(f"""
+        curs.execute(f"""       
         INSERT INTO {self.name}(front, back) VALUES(\'{front}\', \'{back}\')
         """)
+        self.__updateDeckStatus()
         conn.commit()
         curs.close()
         conn.close()
 
-    def deleteCard(self, pk):
+    def remCard(self, pk):
         #remove card based on primary key
         conn = sql.connect(f'{DB_DIR}{self.db_name}')
         curs = conn.cursor()
-        curs.execute(f"""
-        DELETE FROM {self.name} WHERE id={pk}
-        """)
-        conn.commit()
+        curs.execute(f"""DELETE FROM {self.name} WHERE id={pk}""")
+        conn.commit()        
+        self.__updateDeckStatus()
         curs.close()
         conn.close()
 
-    def deleteDeck(self):
+    def remDeck(self):
         #delete db
-        pass
+        deckPath = f'{DB_DIR}/{self.db_name}'
+        remove(deckPath)
+        
+    def __updateDeckStatus(self):
+        #private method to update deck constructor variable self.deck
+        conn = sql.connect(f'{DB_DIR}{self.db_name}')
+        curs = conn.cursor()
+        deck = curs.execute(f"""SELECT * FROM {self.name}""").fetchall()
+        self.deck = deck
+        curs.close()
+        conn.close()
+
