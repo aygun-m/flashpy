@@ -2,6 +2,7 @@ import sqlite3 as sql
 from os.path import exists
 from src.settings import DB_DIR, ABS_DIR
 from src.table import Table
+
 class Deck(Table):
     
     def __init__(self, name):
@@ -22,16 +23,11 @@ class Deck(Table):
                 """)
                 conn.close()
             self.init = True
-                
         else: raise TypeError("Inappropriate argument type for Deck() class")
        
     def __repr__(self):
         #Represent Deck() class as a str
-        pass
-    
-    def selectDeck(self):
-        #Select deck from sql database
-        pass
+        return self.name
     
     def viewDeck(self):
         #begin iterating cards in deck
@@ -44,17 +40,26 @@ class Deck(Table):
 
     def makeCard(self, front, back):
         #Add card to deck
-
-        #Check if deck is in database
         conn = sql.connect(f'{DB_DIR}{self.db_name}')
         curs = conn.cursor()
         curs.execute(f"""
         INSERT INTO {self.name}(front, back) VALUES(\'{front}\', \'{back}\')
         """)
         conn.commit()
+        curs.close()
         conn.close()
 
-    def removeCard(self, pk):
+    def deleteCard(self, pk):
         #remove card based on primary key
-        pass
+        conn = sql.connect(f'{DB_DIR}{self.db_name}')
+        curs = conn.cursor()
+        curs.execute(f"""
+        DELETE FROM {self.name} WHERE id={pk}
+        """)
+        conn.commit()
+        curs.close()
+        conn.close()
 
+    def deleteDeck(self):
+        #delete db
+        pass
