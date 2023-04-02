@@ -1,10 +1,11 @@
 """
 Contains configuration details for flashpy
 """
-import os
+from os.path import abspath
+from os import getcwd
 
 #Absolute Path
-ABS_DIR = os.path.abspath(os.getcwd())
+ABS_DIR = abspath(getcwd())
 
 #Database Directory
 DB_DIR = f'{ABS_DIR}/src/db/'

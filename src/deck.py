@@ -1,7 +1,7 @@
 import sqlite3 as sql
 from os.path import exists
 from src.settings import DB_DIR
-from os import remove, listdir
+from os import remove, listdir, system
 
 class Table:
 
@@ -13,9 +13,11 @@ class Table:
 
         self.allDecks = listdir(self.db_dir)
 
-    def decks(self):
+    def __repr__(self):
 
-        return self.allDecks
+        #list table
+
+        return str(self.allDecks)
 
 class Deck(Table):
     
@@ -39,35 +41,52 @@ class Deck(Table):
             self.init = True
         else: raise TypeError("Inappropriate argument type for Deck() class")
         d = Table()
-        self.allDecks = d.decks()
+        self.allDecks = d.allDecks
         self.__updateDeckStatus()
         
     def __repr__(self):
         #Represent Deck() class as a str
         return self.name
     
-    def printDeck(self):
+    def getDeck(self):
         #begin iterating cards in deck
         conn = sql.connect(f'{DB_DIR}{self.db_name}')
         curs = conn.cursor()
         cards = curs.execute(f"""
         SELECT * FROM {self.name}""").fetchall()
         conn.close()
-        print(cards)
+        return (cards)
 
     def addCard(self, front, back):
         #Add card to deck
-        conn = sql.connect(f'{DB_DIR}{self.db_name}')
+        conn = sql.connect(f'{DB_DIR}/{self.db_name}')
         curs = conn.cursor()
         curs.execute(f"""       
         INSERT INTO {self.name}(front, back) VALUES(\'{front}\', \'{back}\')
         """)
-        self.__updateDeckStatus()
         conn.commit()
         curs.close()
         conn.close()
+        self.__updateDeckStatus()
 
-    def remCard(self, pk):
+    def pasteDeck(self):
+        print(f"DECK NAME : {self.name}")
+        for i, x in enumerate(self.deck):
+            if i == 0: print("======CARD=1======")
+            else: print(f"======CARD={x[0]}======")
+            print(f"{x}")
+        print("=======END=OF=DECK=======")
+
+    def shuffle(self):
+        #Plays through the cards
+        for x in self.deck:
+            system("clear")
+            print(x[1])
+            ans = input("Press Enter to Continue > ")
+            print(x[2])
+        print("You have completed this deck")
+
+    def delCard(self, pk):
         #remove card based on primary key
         conn = sql.connect(f'{DB_DIR}{self.db_name}')
         curs = conn.cursor()
@@ -77,10 +96,14 @@ class Deck(Table):
         curs.close()
         conn.close()
 
-    def remDeck(self):
+    def delDeck(self, name=None):
         #delete db
-        deckPath = f'{DB_DIR}/{self.db_name}'
-        remove(deckPath)
+        if name == None:
+            deckPath = f'{DB_DIR}/{self.db_name}'
+            remove(deckPath)
+        else:
+            remove(f'{DB_DIR}/{name}')
+
         
     def __updateDeckStatus(self):
         #private method to update deck constructor variable self.deck

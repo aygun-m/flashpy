@@ -1,4 +1,4 @@
-from src.deck import Deck
+from src.deck import Deck, Table
 
 a = Deck("poopoo")
-a.remDeck()
+a.shuffle()
