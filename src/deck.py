@@ -1,5 +1,6 @@
 import sqlite3 as sql
 from os.path import exists
+from colorama import Fore
 from src.settings import DB_DIR
 from os import remove, listdir, system
 
@@ -22,27 +23,32 @@ class Table:
 class Deck(Table):
     
     def __init__(self, name):
-        #Constructor for Deck() class
-        if isinstance(name, str): 
-            self.name = name
-            self.db_name = f'{self.name}.db'
-            if not exists(f"{DB_DIR}/{self.db_name}"):
-                conn = sql.connect(f'{DB_DIR}{self.db_name}')
-                curs = conn.cursor()
-                curs.execute(f"""
-                    CREATE TABLE IF NOT EXISTS {self.name} 
-                (
-                    id INTEGER PRIMARY KEY, 
-                    front TEXT,
-                    back TEXT
-                )
-                """)
-                conn.close()
-            self.init = True
-        else: raise TypeError("Inappropriate argument type for Deck() class")
-        d = Table()
-        self.allDecks = d.allDecks
-        self.__updateDeckStatus()
+        if '-' in name:
+            raise Exception("The deck name cannot contain a hyphen due to SQLite3 database compatibility issues")
+        try:
+            #Constructor for Deck() class
+            if isinstance(name, str): 
+                self.name = name
+                self.db_name = f'{self.name}.db'
+                if not exists(f"{DB_DIR}/{self.db_name}"):
+                    conn = sql.connect(f'{DB_DIR}{self.db_name}')
+                    curs = conn.cursor()
+                    curs.execute(f"""
+                        CREATE TABLE IF NOT EXISTS {self.name} 
+                    (
+                        id INTEGER PRIMARY KEY, 
+                        front TEXT,
+                        back TEXT
+                    )
+                    """)
+                    conn.close()
+                self.init = True
+            else: raise TypeError("Inappropriate argument type for Deck() class")
+            d = Table()
+            self.allDecks = d.allDecks
+            self.__updateDeckStatus()
+        except Exception:
+            pass
         
     def __repr__(self):
         #Represent Deck() class as a str
@@ -59,11 +65,10 @@ class Deck(Table):
 
     def addCard(self, front, back):
         #Add card to deck
+        front, back = str(front), str(back)
         conn = sql.connect(f'{DB_DIR}/{self.db_name}')
         curs = conn.cursor()
-        curs.execute(f"""       
-        INSERT INTO {self.name}(front, back) VALUES(\'{front}\', \'{back}\')
-        """)
+        curs.execute(f"""INSERT INTO {self.name}(front, back) VALUES(\"{front}\", \"{back}\")""")
         conn.commit()
         curs.close()
         conn.close()
@@ -79,12 +84,16 @@ class Deck(Table):
 
     def shuffle(self):
         #Plays through the cards
+        b = Fore.BLUE
+        w = Fore.WHITE
         for x in self.deck:
             system("clear")
-            print(x[1])
-            ans = input("Press Enter to Continue > ")
-            print(x[2])
-        print("You have completed this deck")
+            print(f"{b}Question > {w}{x[1]}")
+            input(f"{b}Press Enter to Continue > ")
+            system("clear")
+            print(f"{b}Answer > {w}{x[2]}")
+            input(f"{b}Press Enter to Continue > ")
+        print(f"{w}You have completed this deck")
 
     def delCard(self, pk):
         #remove card based on primary key
@@ -103,7 +112,6 @@ class Deck(Table):
             remove(deckPath)
         else:
             remove(f'{DB_DIR}/{name}')
-
         
     def __updateDeckStatus(self):
         #private method to update deck constructor variable self.deck
