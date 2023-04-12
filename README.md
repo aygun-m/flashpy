@@ -3,13 +3,13 @@ A learning and memorisation tool that uses the active-recall method of memorisat
 
 ## installation
 perform these commands one after the other in order to install flashpy
-```powershell
+```shell
 git clone https://github.com/aygun-m/flashpy.git
 ```
-```powershell
+```shell
 cd flashpy
 ```
-```powershell
+```shell
 pip install .
 ```
 
