@@ -3,7 +3,7 @@ A learning and memorisation tool that uses the active-recall method of memorisat
 
 ## installation
 perform these commands one after the other in order to install flashpy
-```
+```bash
 git clone https://github.com/aygun-m/flashpy.git
 ```
 ```
@@ -14,7 +14,7 @@ pip install .
 ```
 
 ## usage
-```
+```python
 from flashpy.deck import Deck
 
 deck = Deck("MyDeck") # Creates a deck with the name MyDeck, if not already exists. Connects to deck with name if exists.
