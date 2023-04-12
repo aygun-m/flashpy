@@ -1,5 +1,9 @@
-from src.deck import Deck
+from flashpy.deck import Deck
 from os import system
+
+"""
+This file contains a command line interface in order to interact with the local flashpy database
+"""
 
 l = ["Add Card", "Remove Card", "Shuffle Deck", "List Cards", "Exit"]
 

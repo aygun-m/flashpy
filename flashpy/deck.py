@@ -1,7 +1,7 @@
 import sqlite3 as sql
 from os.path import exists
 from colorama import Fore
-from src.settings import DB_DIR
+from flashpy.settings import DB_DIR
 from os import remove, listdir, system
 
 class Table:
