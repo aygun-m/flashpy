@@ -12,3 +12,15 @@ cd flashpy
 ```
 pip install .
 ```
+
+## usage
+```
+from flashpy.deck import Deck
+
+deck = Deck("MyDeck") # Creates a deck with the name MyDeck, if not already exists. Connects to deck with name if exists.
+
+deck.addCard("front card", "back card")
+
+deck.shuffle() # Command Line Interface function to shuffle through cards
+
+```
