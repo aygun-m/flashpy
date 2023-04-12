@@ -3,7 +3,7 @@ A learning and memorisation tool that uses the active-recall method of memorisat
 
 ## installation
 perform these commands one after the other in order to install flashpy
-```linux
+```pascal
 git clone https://github.com/aygun-m/flashpy.git
 ```
 ```
