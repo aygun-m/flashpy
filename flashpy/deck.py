@@ -2,7 +2,7 @@ import sqlite3 as sql
 from os.path import exists
 from colorama import Fore
 from flashpy.settings import DB_DIR
-from os import remove, listdir, system
+from os import remove, listdir, system, mkdir
 
 class Table:
 
@@ -30,7 +30,9 @@ class Deck(Table):
             if isinstance(name, str): 
                 self.name = name
                 self.db_name = f'{self.name}.db'
-                if not exists(f"{DB_DIR}/{self.db_name}"):
+                if not exists("db/"):
+                    mkdir("db/")
+                if not exists(f"db/{self.db_name}"):
                     conn = sql.connect(f'{DB_DIR}{self.db_name}')
                     curs = conn.cursor()
                     curs.execute(f"""
